@@ -12,3 +12,5 @@ pytest
 seaborn
 matplotlib
 xgboost
+gradio
+optuna
