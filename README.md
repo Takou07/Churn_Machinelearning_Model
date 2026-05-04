@@ -41,25 +41,21 @@ Ce projet livre un pipeline MLOps complet pour prédire le départ des clients d
 
 ## Architecture
 
-┌──────────────────────────────────────────────────────┐
-│                        CLIENT                        │
-│         POST /predict   |   GET /ui (Gradio)         │
-└──────────────────────────┬───────────────────────────┘
-                           │ HTTP :80
-               ┌───────────▼───────────┐
-               │  Application Load     │
-               │  Balancer (ALB)       │
-               └───────────┬───────────┘
-                           │ HTTP :8000
-               ┌───────────▼───────────┐
-               │   ECS Fargate Task    │
-               │  ┌─────────────────┐  │
-               │  │    FastAPI      │  │
-               │  │  + Gradio /ui   │  │
-               │  │  + XGBoost      │  │
-               │  │  + MLflow       │  │
-               │  └─────────────────┘  │
-               └───────────────────────┘
+graph TD
+    A[CLIENT: POST /predict ou GET /ui] -->|HTTP :80| B(Application Load Balancer - ALB)
+    B -->|HTTP :8000| C{ECS Fargate Task}
+
+    subgraph Container [Docker Container]
+    C --> D[FastAPI]
+    C --> E[Gradio UI]
+    D --> F[XGBoost Model]
+    D --> G[MLflow Tracking]
+    end
+
+    subgraph CI/CD [Pipeline GitHub Actions]
+    H[Push main] --> I[Docker Build & Push]
+    I --> J[Force ECS Deployment]
+    end
 
 **CI/CD :**
 Push vers `main`
