@@ -41,20 +41,21 @@ Ce projet livre un pipeline MLOps complet pour prédire le départ des clients d
 
 ## Architecture
 
+```mermaid
 graph TD
     A[CLIENT: POST /predict ou GET /ui] -->|HTTP :80| B(Application Load Balancer - ALB)
-    B -->|HTTP :8000| C{ECS Fargate Task}
-
-    subgraph Container [Docker Container]
+    B -->|HTTP :8000| C{Tâche ECS Fargate}
+    
+    subgraph Container [Conteneur Docker]
     C --> D[FastAPI]
     C --> E[Gradio UI]
-    D --> F[XGBoost Model]
-    D --> G[MLflow Tracking]
+    D --> F[Modèle XGBoost]
+    D --> G[Suivi MLflow]
     end
 
-    subgraph CI/CD [Pipeline GitHub Actions]
-    H[Push main] --> I[Docker Build & Push]
-    I --> J[Force ECS Deployment]
+    subgraph CICD [Pipeline GitHub Actions]
+    H[Push sur main] --> I[Build & Push Docker]
+    I --> J[Déploiement forcé ECS]
     end
 
 **CI/CD :**
